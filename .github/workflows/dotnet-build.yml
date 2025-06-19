@@ -1,0 +1,39 @@
+
+name: Build, Test, Publish
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 📦 Restore dependencies
+        run: dotnet restore TimeApiSolution.sln
+
+      - name: 🧪 Run tests
+        run: dotnet test TimeApiSolution.sln --no-restore --verbosity normal
+
+      - name: 🏗️ Build solution
+        run: dotnet build TimeApiSolution.sln --no-restore --configuration Release
+
+      - name: Publish TimeApi
+        run: dotnet publish TimeApi/TimeApi.csproj --configuration Release --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: timeapi-artifact
+          path: ./publish
