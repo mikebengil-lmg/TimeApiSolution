@@ -11,6 +11,8 @@ var app = builder.Build();
 // Read the environment label from configuration
 var envLabel = config["EnvironmentLabel"] ?? builder.Environment.EnvironmentName;
 
+app.MapGet("/", () => $"Hello Noob, you are in {envLabel} site");
+
 app.MapGet("/time", () => new
 {
     time = DateTime.UtcNow,
