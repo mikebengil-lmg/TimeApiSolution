@@ -1,0 +1,24 @@
+replicaCount: 3
+
+image:
+  repository: ghcr.io/mikebengil-lmg/timeapi
+  pullPolicy: IfNotPresent
+  tag: v1.0.0
+
+service:
+  type: NodePort
+  port: 80
+  
+# Service account configuration
+serviceAccount:
+  create: true         # Set to false, this will use the default service account templates/serviceaccount.yaml
+  name: ""             # Set a custom service account name (e.g., "my-custom-sa") if needed
+  
+# Ingress configuration (disabled by default)
+ingress:
+  enabled: false #ignore ingress.yaml
+  
+# Autoscaling configuration (disabled by default)
+# ignore hpa.yaml
+autoscaling:
+  enabled: false

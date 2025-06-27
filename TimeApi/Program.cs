@@ -1,5 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
+//default expose app to port 80
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(80);
+});
+
 // Load base + environment-specific config
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
