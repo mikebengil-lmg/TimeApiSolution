@@ -12,21 +12,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 🛠️ Setup .NET
+      - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: 📦 Restore dependencies
+      - name: Restore dependencies
         run: dotnet restore TimeApiSolution.sln
 
-      - name: 🧪 Run tests
+      - name: Run tests
         run: dotnet test TimeApiSolution.sln --no-restore --verbosity normal
 
-      - name: 🏗️ Build solution
+      - name: Build solution
         run: dotnet build TimeApiSolution.sln --no-restore --configuration Release
 
       - name: Publish TimeApi
@@ -37,3 +37,16 @@ jobs:
         with:
           name: timeapi-artifact
           path: ./publish
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GHCR_TIME }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Set image tag
+        id: vars
+        run: echo "TAG=ghcr.io/${{ github.repository_owner }}/timeapi:${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: docker build -t $TAG -f Dockerfile .
+
+      - name: Push Docker image to GHCR
+        run: docker push $TAG
